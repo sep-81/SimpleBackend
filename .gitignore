@@ -1,0 +1,7 @@
+.vscode/
+bin/
+node_modules/
+public/
+routes/
+test.http
+views/
