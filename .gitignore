@@ -5,3 +5,6 @@ public/
 routes/
 test.http
 views/
+app.js
+temp.js
+
