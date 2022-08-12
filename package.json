@@ -5,7 +5,7 @@
   "scripts": {
     "start": "node ./bin/www",
     "main": "$env:NODE_PATH=D:/npm-global/node_modules&& nodemon index.js",
-    "dev": "set NODE_PATH=D:/npm-global/node_modules&& nodemon index.js"
+    "dev": "set NODE_PATH=D:/npm-global/node_modules&& set NODE_ENV=nest&& set app_password=12515&& set DEBUG=app:startup&& nodemon index.js"
   },
   "dependencies": {
     "cookie-parser": "~1.4.4",

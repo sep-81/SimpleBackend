@@ -7,4 +7,5 @@ test.http
 views/
 app.js
 temp.js
+config/
 
