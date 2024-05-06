@@ -9,5 +9,6 @@ app.js
 temp.js
 config/
 index.js
-
+test/
+coverage/
 

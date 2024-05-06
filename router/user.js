@@ -1,67 +1,48 @@
+// const _ = require('lodash');
+// const bcrypt = require('bcrypt');
+// const jwt = require ('jsonwebtoken');
 const express = require('express');
-const Joi = require('joi');
+// const mongoose = require('mongoose');
+// const auth = require('../middleware/auth');
+const { isAdmin, adminOrId } = require('../middleware/helpers');
+const { validateUser } = require('../models/user');
+const {
+  getUsers, getUser, updateUser, deleteAll, deleteOne,
+} = require('../service/user');
+const { signupUser } = require('../service/auth');
+// const Joi = require('joi');
 
-let user = express.Router();
-let users = [];
-user.get('/',(req,res) => {
-  console.log('retrieve users');
-  return res.json(users);
+const user = express.Router();
+
+// let users = [];
+user.get('/', isAdmin, async (req, res) => {
+  getUsers(res);
 });
 
-user.get('/:id', (req, res) => {
-let user_id = String(req.params.id);
-//console.log(user_id,users);
-let user_index = users.findIndex(u => {
-  //console.log(u.id, user_id);
-  return u.id == user_id
+user.get('/:id', adminOrId, async (req, res) => {
+  getUser(req.user._id, res);
 });
-if(user_index == -1) return res.status(404).send('The user with the given\
- ID was not found.');
-  res.send(users[user_index]);
+
+user.post('/', isAdmin, async (req, res) => {
+  const result = validateUser(req.body, false);
+  if (result.error) return res.status(400).send(result.error.details[0].message);
+  const user = result.value;
+  signupUser(user, res);
 });
-user.post('/',(req,res) => {
-  const schema = Joi.object({
-    name: Joi.string().min(3).required(),
-  }).unknown();//stripUnknown: true
-  const result = schema.validate(req.body);
-  if(result.error) return res.status(400).send(result.error.details[0].message);
-  const repeated = users.find(u => u.name == req.body.name);
-  if(repeated) return res.status(400).send('The user with the given name already exists.');
 
-  users.push({name: req.body.name,id: (+Date.now()).toString(36)});
-  res.send(users.at(-1));
+user.put('/:id', adminOrId, async (req, res) => {
+  const result = validateUser(req.body, true);
+  if (result.error) return res.status(400).send(result.error.details[0].message);
+  const user = result.value;
+  updateUser(req.params.id, user, res);
 });
-user.put('/:id',(req,res) => {
-let user_id = req.params.id;
-let user_index = users.findIndex(u => u.id === user_id);
-if(user_index == -1) return res.status(404).send('The user with the given\
- ID was not found.');
- const schema = Joi.object({
-  name: Joi.string().min(3).required(),
-}).unknown();//stripUnknown: true
-const result = schema.validate(req.body);
-if(result.error) return res.status(400).send(result.error.details[0].message);
 
-const repeated = users.find(u => u.name == req.body.name);
-if(repeated) return res.status(400).send('The user with the given name already exists.');
-
-users[user_index].name = req.body.name;
-
-if(!req.body.name) return res.status(400).send('Name is required.');
-res.send(users[user_index]);
-return;
+user.delete('/', isAdmin, async (req, res) => {
+  deleteAll(res);
 });
-user.delete('/',(req,res) => {
-users = [];
-return res.send('users deleted');
-});
-user.delete('/:id',(req,res) => {
-let user_id = req.params.id;
-let user_index = users.findIndex(u => u.id === user_id);
-if(user_index == -1) return res.status(404).send('The user with the given ID was not found.');
-const deleted_user = users.splice(user_index,1);
-res.send(deleted_user);
 
+user.delete('/:id', adminOrId, async (req, res) => {
+  deleteOne(res, req.params.id);
 });
 
 module.exports = user;

@@ -1,0 +1,46 @@
+{
+  "env": {
+      "commonjs": true,
+      "es2021": true,
+      "node": true,
+      "jest": true
+  },
+  "plugins": [
+    "mocha"
+  ],
+  "extends": [
+    "airbnb-base",
+    "plugin:security/recommended",
+    "plugin:mocha/recommended",
+    "eslint:recommended",
+    "plugin:node/recommended"
+  ],
+  "overrides": [
+  ],
+  "parserOptions": {
+      "ecmaVersion": "latest"
+  },
+  "rules": {
+    "func-names": ["error", "never"],
+    "linebreak-style": 0,
+    "no-underscore-dangle": "off",
+    "consistent-return": "off",
+    "no-shadow": "off",
+    "no-param-reassign": "off",
+    "no-console": "off",
+    "eqeqeq": "off",
+    "global-require": "off",
+    "mocha/no-mocha-arrows": "off",
+    "node/no-missing-require": ["error", {
+      "resolvePaths": ["D:/npm-global/node_modules/"]
+      }]
+  },
+  "settings": {
+    "import/resolver": {
+      "node": {
+       // "moduleDirectory": ["node_modules", "D:/npm-global/node_modules/"],
+        "paths": ["D:/npm-global/node_modules/"]
+      }
+    }
+  }
+}

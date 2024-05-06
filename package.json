@@ -3,15 +3,61 @@
   "version": "0.0.0",
   "private": true,
   "scripts": {
-    "start": "node ./bin/www",
-    "main": "$env:NODE_PATH=D:/npm-global/node_modules&& nodemon index.js",
-    "dev": "set NODE_PATH=D:/npm-global/node_modules&& set NODE_ENV=nest&& set app_password=12515&& set DEBUG=app:startup&& nodemon index.js"
+    "start1": "node ./bin/www",
+    "start": "node main.js",
+    "main": "$env:NODE_PATH='D:/npm-global/node_modules'&& nodemon index.js",
+    "db": "set NODE_PATH=D:/npm-global/node_modules&& nodemon mongoDemo.js",
+    "dev": "set NODE_PATH=D:/npm-global/node_modules&& set NODE_ENV=nest&& set app_password=12515&& app_privateKey=12515&& set DEBUG=app:startup&& nodemon index.js",
+    "test": "jest --verbose --coverage"
+  },
+  "engines": {
+    "node": "16.16.0"
   },
   "dependencies": {
+    "@types/jest": "^29.0.0",
+    "bcrypt": "^5.0.1",
+    "config": "^3.3.7",
     "cookie-parser": "~1.4.4",
     "debug": "~2.6.9",
+    "eslint-import-resolver-node": "^0.3.6",
+    "express": "^4.18.1",
+    "express-async-errors": "^3.1.1",
+    "helmet": "^4.6.0",
     "http-errors": "~1.6.3",
     "jade": "^0.29.0",
-    "morgan": "~1.9.1"
-  }
+    "joi": "^17.4.2",
+    "joi-objectid": "^3.0.0",
+    "jsonwebtoken": "^8.5.1",
+    "lodash": "^4.17.21",
+    "mongoose": "^6.5.3",
+    "morgan": "~1.9.1",
+    "winston": "^3.3.3",
+    "winston-mongodb": "^5.0.0",
+    "moment": "^2.29.4",
+    "compression": "^1.7.4"
+  },
+  "main": "index.js",
+  "devDependencies": {
+    "eslint": "^8.23.0",
+    "eslint-config-airbnb-base": "^15.0.0",
+    "eslint-plugin-import": "^2.26.0",
+    "eslint-plugin-mocha": "^10.1.0",
+    "eslint-plugin-node": "^11.1.0",
+    "eslint-plugin-security": "^1.5.0",
+    "jest": "^29.0.2",
+    "supertest": "^6.2.4"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/sep-81/SimpleBackend.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/sep-81/SimpleBackend/issues"
+  },
+  "homepage": "https://github.com/sep-81/SimpleBackend#readme",
+  "description": "",
+  "eslintConfig": {}
 }

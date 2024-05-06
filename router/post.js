@@ -1,64 +1,45 @@
-const express = require('express');
-const Joi = require('joi');
+const express = require('express')
+// const mongoose = require('mongoose');
+// const _  = require('lodash');
+const { Posts, validatePost } = require('../models/post')
+// const Joi = require('joi');
+// const { isAdmin, adminOrId } = require('../middleware/helpers');
+// const { Users } = require('../models/user');
+const {
+  editPost, getPosts, getPost, addPost, deleteAllPosts, deleteOnePost
+} = require('../service/post')
 
-let post = express.Router();
-let posts = [];
-post.get('/',(req,res) => {
-  console.log('retrieve users');
-  return res.json(posts);
-});
+const post = express.Router()
 
-post.get('/:id', (req, res) => {
-let post_id = String(req.params.id);
-//console.log(user_id,users);
-let post_index = posts.findIndex(p => {
-  //console.log(u.id, user_id);
-  return p.id == post_id
-});
-if(post_index == -1) return res.status(404).send('The post with the given\
- ID was not found.');
-  res.send(posts[post_index]);
-});
-post.post('/',(req,res) => {
-  const schema = Joi.object({
-    title: Joi.string().alphanum().min(3).required(),
-    body: Joi.string().alphanum().min(3).required(),
-    user_id: Joi.string().alphanum().min(3).required(),
-  }).unknown();//stripUnknown: true
-  const result = schema.validate(req.body);
-  if(result.error) return res.status(400).send(result.error.details[0].message);
-  posts.push({titel: req.body.title,user_id: req.body.user_id, id: (+Date.now()).toString(36),body: req.body.body});
-  res.send(posts.at(-1));
-});
-post.put('/:id',(req,res) => {
-let post_id = req.params.id;
-let post_index = posts.findIndex(p => p.id === post_id);
-if(post_index == -1) return res.status(404).send('The post with the given\
- ID was not found.');
- const schema = Joi.object({
-  title: Joi.string().alphanum().min(3),
-  body: Joi.string().alphanum().min(3),
-  user_id: Joi.string().alphanum().min(3),
-}).unknown();
-const result = schema.validate(req.body);
-if(result.error) return res.status(400).send(result.error.details[0].message);
-let cur_post = posts[post_index];
-({title: cur_post.title=cur_post.title, body: cur_post.body=cur_post.body,
-  user_id: cur_post.user_id=cur_post.user_id } = req.body);
-res.send(posts[post_index]);
-return;
-});
-post.delete('/',(req,res) => {
-posts = [];
-return res.send('all posts deleted');
-});
-post.delete('/:id',(req,res) => {
-let post_id = req.params.id;
-let post_index = posts.findIndex(p => p.id === post_id);
-if(post_index == -1) return res.status(404).send('The post with the given ID was not found.');
-const deleted_post = posts.splice(post_index,1);
-res.send(deleted_post);
+post.get('/', async (req, res) => {
+  getPosts(req.user._id, req.user.isAdmin, res)
+})
 
-});
+post.get('/:id', async (req, res) => {
+  getPost(req.user._id, req.user.isAdmin, req.params.id, res)
+})
 
-module.exports = post;
+post.post('/', async (req, res) => {
+  const result = validatePost(req.body, false)
+  if (result.error) {
+    return res.status(400).send(result.error.details[0].message)
+  }
+  addPost(req.user._id, result.value, res)
+})
+
+post.put('/:id', async (req, res) => {
+  let post = validatePost(req.body, true)
+  if (post.error) return res.status(400).send(post.error.details[0].message)
+  post = post.value
+  editPost(req.params.id, req.user._id, post, res)
+})
+
+post.delete('/', async (req, res) => {
+  deleteAllPosts(req.user._id, res)
+})
+
+post.delete('/:id', (req, res) => {
+  deleteOnePost(req.user._id, req.params.id, res)
+})
+
+module.exports = post
